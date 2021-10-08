@@ -6,7 +6,6 @@
 local encrypt = require "kong.plugins.request-encrypt.encrypt"
 local json = require "cjson"
 local rsa = require "resty.rsa"
-local redis = require "resty.redis"
 local kong = kong
 local ngx = ngx
 
@@ -24,7 +23,9 @@ end
 -- @tab conf The plug-in configuration
 -- @return void
 local function signature_redis_prevent_replay(conf, signature)
+    local redis = require "resty.redis"
     local redis_cli = redis:new()
+
     redis_cli:set_timeout(1000);
     local ok, err = redis_cli:connect(conf.redis_host, conf.redis_port)
     if not ok then
